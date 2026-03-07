@@ -6,7 +6,7 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 12:00:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/07 17:32:02 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/07 19:44:06 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,16 @@
 
 #define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 768
+#define MINIMAP_SIZE 100
+#define CELL_SIZE 4
 #define BUFFER_SIZE 42
 
 void	render_walls(t_game *game);
 void	key_hook(mlx_key_data_t keydata, void *param);
+uint32_t	get_tex_pixel(mlx_texture_t *tex, int x, int y);
+char	*ft_strtrim(char const *s1, char const *set);
+char	**ft_split(char const *s, char c);
+void	free_split(char **arr);
 
 char *get_next_line(int fd)
 {
@@ -164,6 +170,21 @@ char	**ft_split(char const *s, char c)
 	return (arr);
 }
 
+char	*ft_strtrim(char const *s1, char const *set)
+{
+	size_t	start = 0;
+	size_t	end = strlen(s1);
+
+	while (s1[start] && strchr(set, s1[start])) start++;
+	while (end > start && strchr(set, s1[end - 1])) end--;
+	size_t len = end - start;
+	char *str = (char *)malloc(sizeof(char) * (len + 1));
+	if (!str) return (NULL);
+	strncpy(str, s1 + start, len);
+	str[len] = '\0';
+	return (str);
+}
+
 void	free_split(char **arr)
 {
 	int	i = 0;
@@ -222,13 +243,13 @@ void	add_map_line(t_game *game, char *line)
 void	parse_line(t_game *game, char *line)
 {
 	if (!ft_strncmp(line, "NO ", 3))
-		game->config.no_path = ft_strdup(line + 3);
+		game->config.no_path = ft_strtrim(line + 3, " \t\n");
 	else if (!ft_strncmp(line, "SO ", 3))
-		game->config.so_path = ft_strdup(line + 3);
+		game->config.so_path = ft_strtrim(line + 3, " \t\n");
 	else if (!ft_strncmp(line, "WE ", 3))
-		game->config.we_path = ft_strdup(line + 3);
+		game->config.we_path = ft_strtrim(line + 3, " \t\n");
 	else if (!ft_strncmp(line, "EA ", 3))
-		game->config.ea_path = ft_strdup(line + 3);
+		game->config.ea_path = ft_strtrim(line + 3, " \t\n");
 	else if (line[0] == 'F')
 		game->config.floor_color = parse_color(line + 2);
 	else if (line[0] == 'C')
@@ -307,6 +328,23 @@ void	render_walls(t_game *game)
 			}
 		}
 
+		// Determine texture
+		int tex_num;
+		if (game->ray.side == 0) {
+			if (game->ray.step_x > 0) tex_num = 2; // W
+			else tex_num = 3; // E
+		} else {
+			if (game->ray.step_y > 0) tex_num = 1; // S
+			else tex_num = 0; // N
+		}
+
+		// Calculate wall_x
+		double wall_x;
+		if (game->ray.side == 0) wall_x = game->player.y + game->ray.perpwalldist * game->ray.raydir_y;
+		else wall_x = game->player.x + game->ray.perpwalldist * game->ray.raydir_x;
+		wall_x -= floor(wall_x);
+		int tex_x = (int)(wall_x * (double)game->tex.textures[tex_num]->width);
+
 		// Calculate distance projected on camera direction
 		if (game->ray.side == 0)
 			game->ray.perpwalldist = (game->ray.sidedist_x - game->ray.deltadist_x);
@@ -322,14 +360,25 @@ void	render_walls(t_game *game)
 		int draw_end = line_height / 2 + SCREEN_HEIGHT / 2;
 		if (draw_end >= SCREEN_HEIGHT) draw_end = SCREEN_HEIGHT - 1;
 
-		// Choose wall color (basic: dark gray for dungeon vibes)
-		uint32_t color = 0x505050FF; // Dark gray with alpha
-
 		// Draw the pixels of the stripe as a vertical line
 		for (int y = draw_start; y <= draw_end; y++) {
+			int tex_y = (int)((double)(y - draw_start) / (double)line_height * (double)game->tex.textures[tex_num]->height);
+			uint32_t color = get_tex_pixel(game->tex.textures[tex_num], tex_x, tex_y);
 			mlx_put_pixel(game->mlx.frame.img, x, y, color);
 		}
 	}
+}
+
+uint32_t	get_tex_pixel(mlx_texture_t *tex, int x, int y)
+{
+	if (x < 0 || x >= (int)tex->width || y < 0 || y >= (int)tex->height)
+		return 0x000000FF; // Black
+	int index = (y * tex->width + x) * 4;
+	uint8_t r = tex->pixels[index];
+	uint8_t g = tex->pixels[index + 1];
+	uint8_t b = tex->pixels[index + 2];
+	uint8_t a = tex->pixels[index + 3];
+	return (a << 24) | (r << 16) | (g << 8) | b;
 }
 
 void	key_hook(mlx_key_data_t keydata, void *param)
@@ -395,7 +444,7 @@ void	key_hook(mlx_key_data_t keydata, void *param)
 	}
 	else if (keydata.key == MLX_KEY_LEFT)
 	{
-		double angle = M_PI / 4.0; // 45 degrees
+		double angle = 3.141592653589793 / 10.0; // 45 degrees
 		double cos_a = cos(-angle);
 		double sin_a = sin(-angle);
 		double old_dir_x = game->player.dir_x;
@@ -408,7 +457,7 @@ void	key_hook(mlx_key_data_t keydata, void *param)
 	}
 	else if (keydata.key == MLX_KEY_RIGHT)
 	{
-		double angle = M_PI / 4.0; // 45 degrees
+		double angle = 3.141592653589793 / 10.0; // 45 degrees
 		double cos_a = cos(angle);
 		double sin_a = sin(angle);
 		double old_dir_x = game->player.dir_x;
@@ -470,6 +519,26 @@ int main(int argc, char **argv)
 
 	// Parse the map file
 	if (parse_file(argv[1], &game)) return 1;
+
+	// Load textures
+	char cwd[1024];
+	if (!getcwd(cwd, sizeof(cwd))) {
+		printf("Error\nFailed to get current directory\n");
+		return 1;
+	}
+	char full_no[2048]; sprintf(full_no, "%s/%s", cwd, game.config.no_path);
+	char full_so[2048]; sprintf(full_so, "%s/%s", cwd, game.config.so_path);
+	char full_we[2048]; sprintf(full_we, "%s/%s", cwd, game.config.we_path);
+	char full_ea[2048]; sprintf(full_ea, "%s/%s", cwd, game.config.ea_path);
+	printf("Loading: %s\n", full_no);
+	game.tex.textures[0] = mlx_load_png(full_no); // N
+	game.tex.textures[1] = mlx_load_png(full_so); // S
+	game.tex.textures[2] = mlx_load_png(full_we); // W
+	game.tex.textures[3] = mlx_load_png(full_ea); // E
+	if (!game.tex.textures[0] || !game.tex.textures[1] || !game.tex.textures[2] || !game.tex.textures[3]) {
+		printf("Error\nFailed to load textures\n");
+		return 1;
+	}
 	// Initialize MLX42
 	game.mlx.mlx = mlx_init(SCREEN_WIDTH, SCREEN_HEIGHT, "cub3D", true);
 	if (!game.mlx.mlx) {
