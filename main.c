@@ -6,7 +6,7 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 12:00:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/07 19:44:06 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/07 20:04:11 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,43 +328,45 @@ void	render_walls(t_game *game)
 			}
 		}
 
-		// Determine texture
-		int tex_num;
-		if (game->ray.side == 0) {
-			if (game->ray.step_x > 0) tex_num = 2; // W
-			else tex_num = 3; // E
-		} else {
-			if (game->ray.step_y > 0) tex_num = 1; // S
-			else tex_num = 0; // N
-		}
-
-		// Calculate wall_x
-		double wall_x;
-		if (game->ray.side == 0) wall_x = game->player.y + game->ray.perpwalldist * game->ray.raydir_y;
-		else wall_x = game->player.x + game->ray.perpwalldist * game->ray.raydir_x;
-		wall_x -= floor(wall_x);
-		int tex_x = (int)(wall_x * (double)game->tex.textures[tex_num]->width);
-
 		// Calculate distance projected on camera direction
 		if (game->ray.side == 0)
 			game->ray.perpwalldist = (game->ray.sidedist_x - game->ray.deltadist_x);
 		else
 			game->ray.perpwalldist = (game->ray.sidedist_y - game->ray.deltadist_y);
 
-		// Calculate height of line to draw on screen
-		int line_height = (int)(SCREEN_HEIGHT / game->ray.perpwalldist);
+		if (game->ray.hit) {
+			// Determine texture
+			int tex_num;
+			if (game->ray.side == 0) {
+				if (game->ray.step_x > 0) tex_num = 2; // W
+				else tex_num = 3; // E
+			} else {
+				if (game->ray.step_y > 0) tex_num = 1; // S
+				else tex_num = 0; // N
+			}
 
-		// Calculate lowest and highest pixel to fill in current stripe
-		int draw_start = -line_height / 2 + SCREEN_HEIGHT / 2;
-		if (draw_start < 0) draw_start = 0;
-		int draw_end = line_height / 2 + SCREEN_HEIGHT / 2;
-		if (draw_end >= SCREEN_HEIGHT) draw_end = SCREEN_HEIGHT - 1;
+			// Calculate wall_x
+			double wall_x;
+			if (game->ray.side == 0) wall_x = game->player.y + game->ray.perpwalldist * game->ray.raydir_y;
+			else wall_x = game->player.x + game->ray.perpwalldist * game->ray.raydir_x;
+			wall_x -= floor(wall_x);
+			int tex_x = (int)(wall_x * (double)game->tex.textures[tex_num]->width);
 
-		// Draw the pixels of the stripe as a vertical line
-		for (int y = draw_start; y <= draw_end; y++) {
-			int tex_y = (int)((double)(y - draw_start) / (double)line_height * (double)game->tex.textures[tex_num]->height);
-			uint32_t color = get_tex_pixel(game->tex.textures[tex_num], tex_x, tex_y);
-			mlx_put_pixel(game->mlx.frame.img, x, y, color);
+			// Calculate height of line to draw on screen
+			int line_height = (int)(SCREEN_HEIGHT / game->ray.perpwalldist);
+
+			// Calculate lowest and highest pixel to fill in current stripe
+			int draw_start = -line_height / 2 + SCREEN_HEIGHT / 2;
+			if (draw_start < 0) draw_start = 0;
+			int draw_end = line_height / 2 + SCREEN_HEIGHT / 2;
+			if (draw_end >= SCREEN_HEIGHT) draw_end = SCREEN_HEIGHT - 1;
+
+			// Draw the pixels of the stripe as a vertical line
+			for (int y = draw_start; y <= draw_end; y++) {
+				int tex_y = (int)((double)(y - draw_start) / (double)line_height * (double)game->tex.textures[tex_num]->height);
+				uint32_t color = get_tex_pixel(game->tex.textures[tex_num], tex_x, tex_y);
+				mlx_put_pixel(game->mlx.frame.img, x, y, color);
+			}
 		}
 	}
 }
@@ -378,7 +380,7 @@ uint32_t	get_tex_pixel(mlx_texture_t *tex, int x, int y)
 	uint8_t g = tex->pixels[index + 1];
 	uint8_t b = tex->pixels[index + 2];
 	uint8_t a = tex->pixels[index + 3];
-	return (a << 24) | (r << 16) | (g << 8) | b;
+	return (r << 24) | (g << 16) | (b << 8) | a;
 }
 
 void	key_hook(mlx_key_data_t keydata, void *param)
@@ -507,7 +509,7 @@ int main(int argc, char **argv)
 	}
 
 	// Initialize game structure
-	game.map.grid = malloc(sizeof(char *) * 1024);
+	game.map.grid = calloc(1024, sizeof(char *));
 	game.map.height = 0;
 	game.map.width = 0;
 	game.config.no_path = NULL;
@@ -585,6 +587,17 @@ int main(int argc, char **argv)
 	mlx_loop(game.mlx.mlx);
 
 	// Cleanup
+	for (int i = 0; i < 4; i++) {
+		if (game.tex.textures[i]) {
+			mlx_delete_texture(game.tex.textures[i]);
+		}
+	}
+	free_split(game.map.grid);
+	free(game.config.no_path);
+	free(game.config.so_path);
+	free(game.config.we_path);
+	free(game.config.ea_path);
+
 	mlx_terminate(game.mlx.mlx);
 	return 0;
 }
