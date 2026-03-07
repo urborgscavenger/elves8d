@@ -6,7 +6,7 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 12:00:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/07 12:00:51 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/07 14:54:01 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,7 +181,38 @@ int	parse_color(char *str)
 
 void	add_map_line(t_game *game, char *line)
 {
-	game->map.grid[game->map.height] = ft_strdup(line);
+	char *map_line = ft_strdup(line);
+	int len = strlen(map_line);
+	if (len > game->map.width) game->map.width = len;
+	for (int j = 0; map_line[j]; j++) {
+		if (map_line[j] == 'N' || map_line[j] == 'S' || map_line[j] == 'E' || map_line[j] == 'W') {
+			game->player.x = j + 0.5;
+			game->player.y = game->map.height + 0.5;
+			if (map_line[j] == 'N') {
+				game->player.dir_x = 0;
+				game->player.dir_y = -1;
+				game->player.plane_x = 0.66;
+				game->player.plane_y = 0;
+			} else if (map_line[j] == 'S') {
+				game->player.dir_x = 0;
+				game->player.dir_y = 1;
+				game->player.plane_x = -0.66;
+				game->player.plane_y = 0;
+			} else if (map_line[j] == 'E') {
+				game->player.dir_x = 1;
+				game->player.dir_y = 0;
+				game->player.plane_x = 0;
+				game->player.plane_y = 0.66;
+			} else if (map_line[j] == 'W') {
+				game->player.dir_x = -1;
+				game->player.dir_y = 0;
+				game->player.plane_x = 0;
+				game->player.plane_y = -0.66;
+			}
+			map_line[j] = '0';
+		}
+	}
+	game->map.grid[game->map.height] = map_line;
 	game->map.height++;
 }
 
@@ -219,6 +250,93 @@ int	parse_file(char *file, t_game *game)
 	return (0);
 }
 
+void key_hook(mlx_key_data_t keydata, void *param)
+{
+	t_game *game = (t_game *)param;
+	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
+	{
+		mlx_close_window(game->mlx.mlx);
+	}
+}
+
+void	render_walls(t_game *game)
+{
+	for (int x = 0; x < SCREEN_WIDTH; x++) {
+		// Calculate ray position and direction
+		double camera_x = 2 * x / (double)SCREEN_WIDTH - 1; // x-coordinate in camera space
+		game->ray.raydir_x = game->player.dir_x + game->player.plane_x * camera_x;
+		game->ray.raydir_y = game->player.dir_y + game->player.plane_y * camera_x;
+
+		// Which box of the map we're in
+		game->ray.map_x = (int)game->player.x;
+		game->ray.map_y = (int)game->player.y;
+
+		// Length of ray from one x or y-side to next x or y-side
+		game->ray.deltadist_x = (game->ray.raydir_x == 0) ? 1e30 : fabs(1 / game->ray.raydir_x);
+		game->ray.deltadist_y = (game->ray.raydir_y == 0) ? 1e30 : fabs(1 / game->ray.raydir_y);
+
+		// Calculate step and initial sideDist
+		if (game->ray.raydir_x < 0) {
+			game->ray.step_x = -1;
+			game->ray.sidedist_x = (game->player.x - game->ray.map_x) * game->ray.deltadist_x;
+		} else {
+			game->ray.step_x = 1;
+			game->ray.sidedist_x = (game->ray.map_x + 1.0 - game->player.x) * game->ray.deltadist_x;
+		}
+		if (game->ray.raydir_y < 0) {
+			game->ray.step_y = -1;
+			game->ray.sidedist_y = (game->player.y - game->ray.map_y) * game->ray.deltadist_y;
+		} else {
+			game->ray.step_y = 1;
+			game->ray.sidedist_y = (game->ray.map_y + 1.0 - game->player.y) * game->ray.deltadist_y;
+		}
+
+		// Perform DDA
+		game->ray.hit = 0;
+		while (game->ray.hit == 0) {
+			// Jump to next map square, either in x-direction, or in y-direction
+			if (game->ray.sidedist_x < game->ray.sidedist_y) {
+				game->ray.sidedist_x += game->ray.deltadist_x;
+				game->ray.map_x += game->ray.step_x;
+				game->ray.side = 0;
+			} else {
+				game->ray.sidedist_y += game->ray.deltadist_y;
+				game->ray.map_y += game->ray.step_y;
+				game->ray.side = 1;
+			}
+			// Check if ray has hit a wall
+			if (game->ray.map_x >= 0 && game->ray.map_x < game->map.width &&
+				game->ray.map_y >= 0 && game->ray.map_y < game->map.height &&
+				game->map.grid[game->ray.map_y][game->ray.map_x] == '1') {
+				game->ray.hit = 1;
+			}
+		}
+
+		// Calculate distance projected on camera direction
+		if (game->ray.side == 0)
+			game->ray.perpwalldist = (game->ray.sidedist_x - game->ray.deltadist_x);
+		else
+			game->ray.perpwalldist = (game->ray.sidedist_y - game->ray.deltadist_y);
+
+		// Calculate height of line to draw on screen
+		int line_height = (int)(SCREEN_HEIGHT / game->ray.perpwalldist);
+
+		// Calculate lowest and highest pixel to fill in current stripe
+		int draw_start = -line_height / 2 + SCREEN_HEIGHT / 2;
+		if (draw_start < 0) draw_start = 0;
+		int draw_end = line_height / 2 + SCREEN_HEIGHT / 2;
+		if (draw_end >= SCREEN_HEIGHT) draw_end = SCREEN_HEIGHT - 1;
+
+		// Choose wall color (basic: dark gray for dungeon vibes)
+		uint32_t color = 0x505050FF; // Dark gray with alpha
+
+		// Draw the pixels of the stripe as a vertical line
+		for (int y = draw_start; y <= draw_end; y++) {
+			mlx_put_pixel(game->mlx.frame.img, x, y, color);
+		}
+	}
+}
+
 int main(int argc, char **argv)
 {
 	t_game game;
@@ -249,6 +367,9 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+	// Set up key hook for escape
+	mlx_key_hook(game.mlx.mlx, key_hook, &game);
+
 	// Create image for rendering
 	game.mlx.frame.img = mlx_new_image(game.mlx.mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
 	if (!game.mlx.frame.img) {
@@ -274,6 +395,9 @@ int main(int argc, char **argv)
 			mlx_put_pixel(game.mlx.frame.img, x, y, floor_color);
 		}
 	}
+
+	// Render walls using raycasting
+	render_walls(&game);
 
 	// Put image to window
 	mlx_image_to_window(game.mlx.mlx, game.mlx.frame.img, 0, 0);
