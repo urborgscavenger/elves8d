@@ -6,7 +6,7 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 12:00:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/07 14:54:01 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/07 17:05:02 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@
 #define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 768
 #define BUFFER_SIZE 42
+
+void	render_walls(t_game *game);
+void	key_hook(mlx_key_data_t keydata, void *param);
 
 char *get_next_line(int fd)
 {
@@ -250,15 +253,6 @@ int	parse_file(char *file, t_game *game)
 	return (0);
 }
 
-void key_hook(mlx_key_data_t keydata, void *param)
-{
-	t_game *game = (t_game *)param;
-	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
-	{
-		mlx_close_window(game->mlx.mlx);
-	}
-}
-
 void	render_walls(t_game *game)
 {
 	for (int x = 0; x < SCREEN_WIDTH; x++) {
@@ -334,6 +328,116 @@ void	render_walls(t_game *game)
 		for (int y = draw_start; y <= draw_end; y++) {
 			mlx_put_pixel(game->mlx.frame.img, x, y, color);
 		}
+	}
+}
+
+void	key_hook(mlx_key_data_t keydata, void *param)
+{
+	t_game *game = (t_game *)param;
+	int changed = 0;
+
+	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
+	{
+		mlx_close_window(game->mlx.mlx);
+		return;
+	}
+
+	if (keydata.action != MLX_PRESS) return; // Only on press
+
+	if (keydata.key == MLX_KEY_W)
+	{
+		int new_x = (int)(game->player.x + game->player.dir_x);
+		int new_y = (int)(game->player.y + game->player.dir_y);
+		if (new_x >= 0 && new_x < game->map.width && new_y >= 0 && new_y < game->map.height &&
+			game->map.grid[new_y][new_x] != '1')
+		{
+			game->player.x += game->player.dir_x;
+			game->player.y += game->player.dir_y;
+			changed = 1;
+		}
+	}
+	else if (keydata.key == MLX_KEY_S)
+	{
+		int new_x = (int)(game->player.x - game->player.dir_x);
+		int new_y = (int)(game->player.y - game->player.dir_y);
+		if (new_x >= 0 && new_x < game->map.width && new_y >= 0 && new_y < game->map.height &&
+			game->map.grid[new_y][new_x] != '1')
+		{
+			game->player.x -= game->player.dir_x;
+			game->player.y -= game->player.dir_y;
+			changed = 1;
+		}
+	}
+	else if (keydata.key == MLX_KEY_A)
+	{
+		int new_x = (int)(game->player.x - game->player.plane_x);
+		int new_y = (int)(game->player.y - game->player.plane_y);
+		if (new_x >= 0 && new_x < game->map.width && new_y >= 0 && new_y < game->map.height &&
+			game->map.grid[new_y][new_x] != '1')
+		{
+			game->player.x -= game->player.plane_x;
+			game->player.y -= game->player.plane_y;
+			changed = 1;
+		}
+	}
+	else if (keydata.key == MLX_KEY_D)
+	{
+		int new_x = (int)(game->player.x + game->player.plane_x);
+		int new_y = (int)(game->player.y + game->player.plane_y);
+		if (new_x >= 0 && new_x < game->map.width && new_y >= 0 && new_y < game->map.height &&
+			game->map.grid[new_y][new_x] != '1')
+		{
+			game->player.x += game->player.plane_x;
+			game->player.y += game->player.plane_y;
+			changed = 1;
+		}
+	}
+	else if (keydata.key == MLX_KEY_LEFT)
+	{
+		double old_dir_x = game->player.dir_x;
+		game->player.dir_x = -game->player.dir_y;
+		game->player.dir_y = old_dir_x;
+		double old_plane_x = game->player.plane_x;
+		game->player.plane_x = -game->player.plane_y;
+		game->player.plane_y = old_plane_x;
+		changed = 1;
+	}
+	else if (keydata.key == MLX_KEY_RIGHT)
+	{
+		double old_dir_x = game->player.dir_x;
+		game->player.dir_x = game->player.dir_y;
+		game->player.dir_y = -old_dir_x;
+		double old_plane_x = game->player.plane_x;
+		game->player.plane_x = game->player.plane_y;
+		game->player.plane_y = -old_plane_x;
+		changed = 1;
+	}
+
+	if (changed)
+	{
+		// Clear image
+		for (int y = 0; y < SCREEN_HEIGHT; y++) {
+			for (int x = 0; x < SCREEN_WIDTH; x++) {
+				mlx_put_pixel(game->mlx.frame.img, x, y, 0x000000FF);
+			}
+		}
+
+		// Draw ceiling and floor
+		uint32_t ceiling_color = (game->config.ceiling_color << 8) | 0xFF;
+		uint32_t floor_color = (game->config.floor_color << 8) | 0xFF;
+		for (int y = 0; y < SCREEN_HEIGHT / 2; y++) {
+			for (int x = 0; x < SCREEN_WIDTH; x++) {
+				mlx_put_pixel(game->mlx.frame.img, x, y, ceiling_color);
+			}
+		}
+		for (int y = SCREEN_HEIGHT / 2; y < SCREEN_HEIGHT; y++) {
+			for (int x = 0; x < SCREEN_WIDTH; x++) {
+				mlx_put_pixel(game->mlx.frame.img, x, y, floor_color);
+			}
+		}
+
+		// Render walls
+		render_walls(game);
 	}
 }
 
