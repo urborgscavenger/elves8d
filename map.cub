@@ -1,6 +1,6 @@
 NO ./fractal1.png
 SO ./fractal2.png
-WE ./fractal1.png
+WE ./fractal3.png
 EA ./fractal2.png
 F 80,40,0
 C 30,30,60
