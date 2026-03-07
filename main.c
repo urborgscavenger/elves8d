@@ -6,7 +6,7 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 12:00:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/07 20:04:11 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/07 21:35:20 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,7 +205,15 @@ int	parse_color(char *str)
 
 void	add_map_line(t_game *game, char *line)
 {
-	char *map_line = ft_strdup(line);
+	int leading_spaces = 0;
+	while (line[leading_spaces] == ' ' || line[leading_spaces] == '\t') leading_spaces++;
+	char *trimmed = ft_strtrim(line, " \t");
+	int trimmed_len = strlen(trimmed);
+	char *map_line = malloc(trimmed_len + leading_spaces + 1);
+	memset(map_line, '1', leading_spaces);
+	strcpy(map_line + leading_spaces, trimmed);
+	map_line[trimmed_len + leading_spaces] = '\0';
+	free(trimmed);
 	int len = strlen(map_line);
 	if (len > game->map.width) game->map.width = len;
 	for (int j = 0; map_line[j]; j++) {
@@ -254,7 +262,7 @@ void	parse_line(t_game *game, char *line)
 		game->config.floor_color = parse_color(line + 2);
 	else if (line[0] == 'C')
 		game->config.ceiling_color = parse_color(line + 2);
-	else if (line[0] == '1' || line[0] == '0')
+	else if (line[0] == '1' || line[0] == '0' || line[0] == ' ' || line[0] == '\t' || line[0] == 'N' || line[0] == 'S' || line[0] == 'E' || line[0] == 'W')
 		add_map_line(game, line);
 }
 
@@ -276,6 +284,12 @@ int	parse_file(char *file, t_game *game)
 
 void	render_walls(t_game *game)
 {
+	// Get time for texture animation
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	long time_us = tv.tv_sec * 1000000 + tv.tv_usec;
+	int offset = (time_us / 50000) % 64; // Adjust speed and wrap at 64 (assuming texture height)
+
 	for (int x = 0; x < SCREEN_WIDTH; x++) {
 		// Calculate ray position and direction
 		double camera_x = 2 * x / (double)SCREEN_WIDTH - 1; // x-coordinate in camera space
@@ -363,7 +377,7 @@ void	render_walls(t_game *game)
 
 			// Draw the pixels of the stripe as a vertical line
 			for (int y = draw_start; y <= draw_end; y++) {
-				int tex_y = (int)((double)(y - draw_start) / (double)line_height * (double)game->tex.textures[tex_num]->height);
+				int tex_y = ((int)((double)(y - draw_start) / (double)line_height * (double)game->tex.textures[tex_num]->height) + offset) % game->tex.textures[tex_num]->height;
 				uint32_t color = get_tex_pixel(game->tex.textures[tex_num], tex_x, tex_y);
 				mlx_put_pixel(game->mlx.frame.img, x, y, color);
 			}
