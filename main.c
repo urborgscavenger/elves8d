@@ -6,7 +6,7 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 12:00:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/07 17:05:02 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/07 17:32:02 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,7 +287,8 @@ void	render_walls(t_game *game)
 
 		// Perform DDA
 		game->ray.hit = 0;
-		while (game->ray.hit == 0) {
+		int max_steps = 10000;
+		while (game->ray.hit == 0 && max_steps-- > 0) {
 			// Jump to next map square, either in x-direction, or in y-direction
 			if (game->ray.sidedist_x < game->ray.sidedist_y) {
 				game->ray.sidedist_x += game->ray.deltadist_x;
@@ -394,22 +395,28 @@ void	key_hook(mlx_key_data_t keydata, void *param)
 	}
 	else if (keydata.key == MLX_KEY_LEFT)
 	{
+		double angle = M_PI / 4.0; // 45 degrees
+		double cos_a = cos(-angle);
+		double sin_a = sin(-angle);
 		double old_dir_x = game->player.dir_x;
-		game->player.dir_x = -game->player.dir_y;
-		game->player.dir_y = old_dir_x;
+		game->player.dir_x = old_dir_x * cos_a - game->player.dir_y * sin_a;
+		game->player.dir_y = old_dir_x * sin_a + game->player.dir_y * cos_a;
 		double old_plane_x = game->player.plane_x;
-		game->player.plane_x = -game->player.plane_y;
-		game->player.plane_y = old_plane_x;
+		game->player.plane_x = old_plane_x * cos_a - game->player.plane_y * sin_a;
+		game->player.plane_y = old_plane_x * sin_a + game->player.plane_y * cos_a;
 		changed = 1;
 	}
 	else if (keydata.key == MLX_KEY_RIGHT)
 	{
+		double angle = M_PI / 4.0; // 45 degrees
+		double cos_a = cos(angle);
+		double sin_a = sin(angle);
 		double old_dir_x = game->player.dir_x;
-		game->player.dir_x = game->player.dir_y;
-		game->player.dir_y = -old_dir_x;
+		game->player.dir_x = old_dir_x * cos_a - game->player.dir_y * sin_a;
+		game->player.dir_y = old_dir_x * sin_a + game->player.dir_y * cos_a;
 		double old_plane_x = game->player.plane_x;
-		game->player.plane_x = game->player.plane_y;
-		game->player.plane_y = -old_plane_x;
+		game->player.plane_x = old_plane_x * cos_a - game->player.plane_y * sin_a;
+		game->player.plane_y = old_plane_x * sin_a + game->player.plane_y * cos_a;
 		changed = 1;
 	}
 
@@ -463,7 +470,6 @@ int main(int argc, char **argv)
 
 	// Parse the map file
 	if (parse_file(argv[1], &game)) return 1;
-
 	// Initialize MLX42
 	game.mlx.mlx = mlx_init(SCREEN_WIDTH, SCREEN_HEIGHT, "cub3D", true);
 	if (!game.mlx.mlx) {
