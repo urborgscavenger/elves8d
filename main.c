@@ -6,7 +6,7 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 12:00:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/07 21:35:20 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/08 01:13:27 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -284,27 +284,21 @@ int	parse_file(char *file, t_game *game)
 
 void	render_walls(t_game *game)
 {
-	// Get time for texture animation
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	long time_us = tv.tv_sec * 1000000 + tv.tv_usec;
-	int offset = (time_us / 50000) % 64; // Adjust speed and wrap at 64 (assuming texture height)
-
 	for (int x = 0; x < SCREEN_WIDTH; x++) {
-		// Calculate ray position and direction
-		double camera_x = 2 * x / (double)SCREEN_WIDTH - 1; // x-coordinate in camera space
+		// Calculate ray direction
+		double camera_x = 2 * x / (double)SCREEN_WIDTH - 1;
 		game->ray.raydir_x = game->player.dir_x + game->player.plane_x * camera_x;
 		game->ray.raydir_y = game->player.dir_y + game->player.plane_y * camera_x;
 
-		// Which box of the map we're in
+		// Map position
 		game->ray.map_x = (int)game->player.x;
 		game->ray.map_y = (int)game->player.y;
 
-		// Length of ray from one x or y-side to next x or y-side
-		game->ray.deltadist_x = (game->ray.raydir_x == 0) ? 1e30 : fabs(1 / game->ray.raydir_x);
-		game->ray.deltadist_y = (game->ray.raydir_y == 0) ? 1e30 : fabs(1 / game->ray.raydir_y);
+		// Delta distance
+		game->ray.deltadist_x = fabs(1 / game->ray.raydir_x);
+		game->ray.deltadist_y = fabs(1 / game->ray.raydir_y);
 
-		// Calculate step and initial sideDist
+		// Step and side distance
 		if (game->ray.raydir_x < 0) {
 			game->ray.step_x = -1;
 			game->ray.sidedist_x = (game->player.x - game->ray.map_x) * game->ray.deltadist_x;
@@ -320,11 +314,9 @@ void	render_walls(t_game *game)
 			game->ray.sidedist_y = (game->ray.map_y + 1.0 - game->player.y) * game->ray.deltadist_y;
 		}
 
-		// Perform DDA
+		// DDA
 		game->ray.hit = 0;
-		int max_steps = 10000;
-		while (game->ray.hit == 0 && max_steps-- > 0) {
-			// Jump to next map square, either in x-direction, or in y-direction
+		while (!game->ray.hit) {
 			if (game->ray.sidedist_x < game->ray.sidedist_y) {
 				game->ray.sidedist_x += game->ray.deltadist_x;
 				game->ray.map_x += game->ray.step_x;
@@ -334,53 +326,48 @@ void	render_walls(t_game *game)
 				game->ray.map_y += game->ray.step_y;
 				game->ray.side = 1;
 			}
-			// Check if ray has hit a wall
-			if (game->ray.map_x >= 0 && game->ray.map_x < game->map.width &&
-				game->ray.map_y >= 0 && game->ray.map_y < game->map.height &&
+			if (game->ray.map_x < 0 || game->ray.map_x >= game->map.width ||
+				game->ray.map_y < 0 || game->ray.map_y >= game->map.height ||
 				game->map.grid[game->ray.map_y][game->ray.map_x] == '1') {
 				game->ray.hit = 1;
 			}
 		}
 
-		// Calculate distance projected on camera direction
+		// Perpendicular distance
 		if (game->ray.side == 0)
-			game->ray.perpwalldist = (game->ray.sidedist_x - game->ray.deltadist_x);
+			game->ray.perpwalldist = game->ray.sidedist_x - game->ray.deltadist_x;
 		else
-			game->ray.perpwalldist = (game->ray.sidedist_y - game->ray.deltadist_y);
+			game->ray.perpwalldist = game->ray.sidedist_y - game->ray.deltadist_y;
 
-		if (game->ray.hit) {
-			// Determine texture
-			int tex_num;
-			if (game->ray.side == 0) {
-				if (game->ray.step_x > 0) tex_num = 2; // W
-				else tex_num = 3; // E
-			} else {
-				if (game->ray.step_y > 0) tex_num = 1; // S
-				else tex_num = 0; // N
-			}
+		// Texture
+		int tex_num = 0;
+		if (game->ray.side == 0) {
+			if (game->ray.step_x > 0) tex_num = 2; // W
+			else tex_num = 3; // E
+		} else {
+			if (game->ray.step_y > 0) tex_num = 1; // S
+			else tex_num = 0; // N
+		}
 
-			// Calculate wall_x
-			double wall_x;
-			if (game->ray.side == 0) wall_x = game->player.y + game->ray.perpwalldist * game->ray.raydir_y;
-			else wall_x = game->player.x + game->ray.perpwalldist * game->ray.raydir_x;
-			wall_x -= floor(wall_x);
-			int tex_x = (int)(wall_x * (double)game->tex.textures[tex_num]->width);
+		// Wall X
+		double wall_x;
+		if (game->ray.side == 0) wall_x = game->player.y + game->ray.perpwalldist * game->ray.raydir_y;
+		else wall_x = game->player.x + game->ray.perpwalldist * game->ray.raydir_x;
+		wall_x -= floor(wall_x);
+		int tex_x = (int)(wall_x * game->tex.textures[tex_num]->width);
 
-			// Calculate height of line to draw on screen
-			int line_height = (int)(SCREEN_HEIGHT / game->ray.perpwalldist);
+		// Line height
+		int line_height = (int)(SCREEN_HEIGHT / game->ray.perpwalldist);
+		int draw_start = -line_height / 2 + SCREEN_HEIGHT / 2;
+		if (draw_start < 0) draw_start = 0;
+		int draw_end = line_height / 2 + SCREEN_HEIGHT / 2;
+		if (draw_end >= SCREEN_HEIGHT) draw_end = SCREEN_HEIGHT - 1;
 
-			// Calculate lowest and highest pixel to fill in current stripe
-			int draw_start = -line_height / 2 + SCREEN_HEIGHT / 2;
-			if (draw_start < 0) draw_start = 0;
-			int draw_end = line_height / 2 + SCREEN_HEIGHT / 2;
-			if (draw_end >= SCREEN_HEIGHT) draw_end = SCREEN_HEIGHT - 1;
-
-			// Draw the pixels of the stripe as a vertical line
-			for (int y = draw_start; y <= draw_end; y++) {
-				int tex_y = ((int)((double)(y - draw_start) / (double)line_height * (double)game->tex.textures[tex_num]->height) + offset) % game->tex.textures[tex_num]->height;
-				uint32_t color = get_tex_pixel(game->tex.textures[tex_num], tex_x, tex_y);
-				mlx_put_pixel(game->mlx.frame.img, x, y, color);
-			}
+		// Draw
+		for (int y = draw_start; y <= draw_end; y++) {
+			int tex_y = (int)((y - draw_start) / (double)line_height * game->tex.textures[tex_num]->height);
+			uint32_t color = get_tex_pixel(game->tex.textures[tex_num], tex_x, tex_y);
+			mlx_put_pixel(game->mlx.frame.img, x, y, color);
 		}
 	}
 }
@@ -395,6 +382,78 @@ uint32_t	get_tex_pixel(mlx_texture_t *tex, int x, int y)
 	uint8_t b = tex->pixels[index + 2];
 	uint8_t a = tex->pixels[index + 3];
 	return (r << 24) | (g << 16) | (b << 8) | a;
+}
+
+void render_minimap(t_game *game) {
+    int mini_size = 200;
+    int cell_size = mini_size / (game->map.width > game->map.height ? game->map.width : game->map.height);
+    if (cell_size < 1) cell_size = 1;
+    int offset_x = 10, offset_y = 10;
+
+    // Draw map
+    for (int i = 0; i < game->map.height; i++) {
+        for (int j = 0; j < game->map.width; j++) {
+            uint32_t color = (game->map.grid[i][j] == '1') ? 0x000000FF : 0xFFFFFF00; // Black for walls, white for empty
+            for (int dy = 0; dy < cell_size; dy++) {
+                for (int dx = 0; dx < cell_size; dx++) {
+                    int px = offset_x + j * cell_size + dx;
+                    int py = offset_y + i * cell_size + dy;
+                    if (px < SCREEN_WIDTH && py < SCREEN_HEIGHT) mlx_put_pixel(game->mlx.frame.img, px, py, color);
+                }
+            }
+        }
+    }
+
+    // Draw player
+    int px = offset_x + (int)(game->player.x * cell_size);
+    int py = offset_y + (int)(game->player.y * cell_size);
+    for (int dy = -2; dy <= 2; dy++) {
+        for (int dx = -2; dx <= 2; dx++) {
+            int x = px + dx, y = py + dy;
+            if (x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT) mlx_put_pixel(game->mlx.frame.img, x, y, 0xFF0000FF); // Red
+        }
+    }
+
+    // Draw rays (every 10th ray for better visibility)
+    for (int x = 0; x < SCREEN_WIDTH; x += 10) {
+        double cam_x = 2 * x / (double)SCREEN_WIDTH - 1;
+        double ray_x = game->player.dir_x + game->player.plane_x * cam_x;
+        double ray_y = game->player.dir_y + game->player.plane_y * cam_x;
+        int map_x = (int)game->player.x;
+        int map_y = (int)game->player.y;
+        double delta_x = fabs(1 / ray_x);
+        double delta_y = fabs(1 / ray_y);
+        int step_x = (ray_x < 0) ? -1 : 1;
+        int step_y = (ray_y < 0) ? -1 : 1;
+        double side_x = (ray_x < 0) ? (game->player.x - map_x) * delta_x : (map_x + 1 - game->player.x) * delta_x;
+        double side_y = (ray_y < 0) ? (game->player.y - map_y) * delta_y : (map_y + 1 - game->player.y) * delta_y;
+        int hit = 0;
+        while (!hit && map_x >= 0 && map_x < game->map.width && map_y >= 0 && map_y < game->map.height) {
+            if (side_x < side_y) {
+                side_x += delta_x;
+                map_x += step_x;
+            } else {
+                side_y += delta_y;
+                map_y += step_y;
+            }
+            if (game->map.grid[map_y][map_x] == '1') hit = 1;
+        }
+        // Draw line from player to hit, only within minimap area
+        int end_x = offset_x + map_x * cell_size + cell_size / 2;
+        int end_y = offset_y + map_y * cell_size + cell_size / 2;
+        // Simple line drawing
+        int dx = abs(end_x - px), dy = abs(end_y - py);
+        int sx = px < end_x ? 1 : -1, sy = py < end_y ? 1 : -1;
+        int err = dx - dy;
+        while (1) {
+            if (px >= offset_x && px < offset_x + mini_size && py >= offset_y && py < offset_y + mini_size) 
+                mlx_put_pixel(game->mlx.frame.img, px, py, 0x00FF00FF); // Green, only in minimap
+            if (px == end_x && py == end_y) break;
+            int e2 = 2 * err;
+            if (e2 > -dy) { err -= dy; px += sx; }
+            if (e2 < dx) { err += dx; py += sy; }
+        }
+    }
 }
 
 void	key_hook(mlx_key_data_t keydata, void *param)
@@ -510,6 +569,9 @@ void	key_hook(mlx_key_data_t keydata, void *param)
 
 		// Render walls
 		render_walls(game);
+
+		// Render minimap
+		render_minimap(game);
 	}
 }
 
@@ -593,6 +655,9 @@ int main(int argc, char **argv)
 
 	// Render walls using raycasting
 	render_walls(&game);
+
+	// Render minimap
+	render_minimap(&game);
 
 	// Put image to window
 	mlx_image_to_window(game.mlx.mlx, game.mlx.frame.img, 0, 0);
