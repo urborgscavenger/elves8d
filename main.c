@@ -6,7 +6,7 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 12:00:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/08 01:13:27 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/08 17:18:44 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 #define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 768
+#define NUM_RAYS 40000000
 #define MINIMAP_SIZE 100
 #define CELL_SIZE 4
 #define BUFFER_SIZE 42
@@ -28,6 +29,54 @@ uint32_t	get_tex_pixel(mlx_texture_t *tex, int x, int y);
 char	*ft_strtrim(char const *s1, char const *set);
 char	**ft_split(char const *s, char c);
 void	free_split(char **arr);
+
+size_t	ft_strlen(const char *s)
+{
+	size_t	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
+
+char	*ft_strncpy(char *dest, const char *src, size_t n)
+{
+	size_t	i = 0;
+	while (i < n && src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	while (i < n)
+	{
+		dest[i] = '\0';
+		i++;
+	}
+	return (dest);
+}
+
+void	*ft_memset(void *s, int c, size_t n)
+{
+	unsigned char	*p = s;
+	while (n--)
+		*p++ = (unsigned char)c;
+	return (s);
+}
+
+char	*ft_strcpy(char *dest, const char *src)
+{
+	char	*d = dest;
+	while ((*d++ = *src++));
+	return (dest);
+}
+
+void	*ft_calloc(size_t nmemb, size_t size)
+{
+	size_t	total = nmemb * size;
+	void	*ptr = malloc(total);
+	if (ptr)
+		ft_memset(ptr, 0, total);
+	return (ptr);
+}
 
 char *get_next_line(int fd)
 {
@@ -84,7 +133,7 @@ char *get_next_line(int fd)
 
 char	*ft_strdup(const char *s1)
 {
-	char	*str = (char *)malloc(sizeof(*s1) * (strlen(s1) + 1));
+	char	*str = (char *)malloc(sizeof(*s1) * (ft_strlen(s1) + 1));
 	if (!str) return (NULL);
 	size_t i = 0;
 	while (s1[i]) {
@@ -173,14 +222,14 @@ char	**ft_split(char const *s, char c)
 char	*ft_strtrim(char const *s1, char const *set)
 {
 	size_t	start = 0;
-	size_t	end = strlen(s1);
+	size_t	end = ft_strlen(s1);
 
 	while (s1[start] && strchr(set, s1[start])) start++;
 	while (end > start && strchr(set, s1[end - 1])) end--;
 	size_t len = end - start;
 	char *str = (char *)malloc(sizeof(char) * (len + 1));
 	if (!str) return (NULL);
-	strncpy(str, s1 + start, len);
+	ft_strncpy(str, s1 + start, len);
 	str[len] = '\0';
 	return (str);
 }
@@ -208,13 +257,13 @@ void	add_map_line(t_game *game, char *line)
 	int leading_spaces = 0;
 	while (line[leading_spaces] == ' ' || line[leading_spaces] == '\t') leading_spaces++;
 	char *trimmed = ft_strtrim(line, " \t");
-	int trimmed_len = strlen(trimmed);
+	int trimmed_len = ft_strlen(trimmed);
 	char *map_line = malloc(trimmed_len + leading_spaces + 1);
-	memset(map_line, '1', leading_spaces);
-	strcpy(map_line + leading_spaces, trimmed);
+	ft_memset(map_line, '1', leading_spaces);
+	ft_strcpy(map_line + leading_spaces, trimmed);
 	map_line[trimmed_len + leading_spaces] = '\0';
 	free(trimmed);
-	int len = strlen(map_line);
+	int len = ft_strlen(map_line);
 	if (len > game->map.width) game->map.width = len;
 	for (int j = 0; map_line[j]; j++) {
 		if (map_line[j] == 'N' || map_line[j] == 'S' || map_line[j] == 'E' || map_line[j] == 'W') {
@@ -415,8 +464,8 @@ void render_minimap(t_game *game) {
     }
 
     // Draw rays (every 10th ray for better visibility)
-    for (int x = 0; x < SCREEN_WIDTH; x += 10) {
-        double cam_x = 2 * x / (double)SCREEN_WIDTH - 1;
+    for (int ray = 0; ray < NUM_RAYS; ray += 10) {
+        double cam_x = 2 * (double)ray / (NUM_RAYS - 1) - 1;
         double ray_x = game->player.dir_x + game->player.plane_x * cam_x;
         double ray_y = game->player.dir_y + game->player.plane_y * cam_x;
         int map_x = (int)game->player.x;
@@ -585,7 +634,7 @@ int main(int argc, char **argv)
 	}
 
 	// Initialize game structure
-	game.map.grid = calloc(1024, sizeof(char *));
+	game.map.grid = ft_calloc(1024, sizeof(char *));
 	game.map.height = 0;
 	game.map.width = 0;
 	game.config.no_path = NULL;

@@ -6,7 +6,7 @@
 #    By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/03 15:23:16 by wilisson          #+#    #+#              #
-#    Updated: 2026/03/07 11:51:21 by mbauer           ###   ########.fr        #
+#    Updated: 2026/03/08 15:34:14 by mbauer           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = cub3d
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -Iincludes -IMLX42/include
-LDFLAGS = -LMLX42/build -lmlx42 -ldl -lglfw -pthread -lm
+LDFLAGS = -LMLX42/build -lmlx42 -ldl -lglfw -pthread -lm 
 
 SRC = main.c
 OBJ = $(SRC:.c=.o)
