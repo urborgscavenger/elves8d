@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   structs.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/03 15:12:52 by wilisson          #+#    #+#             */
-/*   Updated: 2026/03/10 16:53:04 by wilisson         ###   ########.fr       */
+/*   Updated: 2026/03/10 18:28:34 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STRUCTS_H
 # define STRUCTS_H
+
+# include <MLX42/MLX42.h>
 
 typedef struct s_config
 {
