@@ -3,24 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   structs.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
+/*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/03 15:12:52 by wilisson          #+#    #+#             */
-/*   Updated: 2026/03/07 17:05:02 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/10 16:53:04 by wilisson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STRUCTS_H
 # define STRUCTS_H
-
-#include <MLX42/MLX42.h>
-#include <unistd.h> //read write close
-#include <fcntl.h> //open
-#include <stdlib.h> //malloc free exit
-#include <stdio.h> //printf perror
-#include <string.h> // strerror
-#include <sys/time.h> //gettimeofday
-#include <math.h> //sin cos sqrt etc.
 
 typedef struct s_config
 {

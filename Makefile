@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+         #
+#    By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/03 15:23:16 by wilisson          #+#    #+#              #
-#    Updated: 2026/03/08 15:34:14 by mbauer           ###   ########.fr        #
+#    Updated: 2026/03/10 16:49:14 by wilisson         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,17 +14,30 @@ NAME = cub3d
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -Iincludes -IMLX42/include
-LDFLAGS = -LMLX42/build -lmlx42 -ldl -lglfw -pthread -lm 
+LDFLAGS = -LMLX42/build -lmlx42 -ldl -lglfw -pthread -lm
 
-SRC = main.c
+LIBFT_DIR = libft
+LIBFT = $(LIBFT_DIR)/libft.a
+
+SRC = main.c \
+	parsing/read_file.c \
+	parsing/parse_file.c \
+	parsing/parse_lines.c \
+	parsing/parse_config.c \
+	parsing/parse_map.c \
+	parsing/validate_map.c \
+	parsing/utils.c
 OBJ = $(SRC:.c=.o)
 
 MLX42_LIB = MLX42/build/libmlx42.a
 
 all: $(NAME)
 
-$(NAME): $(MLX42_LIB) $(OBJ)
-	$(CC) $(OBJ) -o $(NAME) $(LDFLAGS)
+$(NAME): $(MLX42_LIB) $(LIBFT) $(OBJ)
+	$(CC) $(OBJ) $(LIBFT) -o $(NAME) $(LDFLAGS)
+
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_DIR)
 
 $(MLX42_LIB):
 	@if [ ! -d "MLX42" ]; then \
@@ -41,17 +54,16 @@ $(MLX42_LIB):
 
 clean:
 	rm -f $(OBJ)
+	$(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: clean
 	rm -f $(NAME)
+	$(MAKE) -C $(LIBFT_DIR) fclean
 	@if [ -d "MLX42/build" ]; then \
 		rm -rf MLX42/build; \
 	fi
 	@if [ -d "MLX42" ]; then \
 		rm -rf MLX42; \
-	fi
-	@if [ -d "MLX42/build" ]; then \
-		rm -rf MLX42/build; \
 	fi
 
 re: fclean all

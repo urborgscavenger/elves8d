@@ -1,0 +1,53 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cub3d.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/07 15:21:40 by wilisson          #+#    #+#             */
+/*   Updated: 2026/03/10 16:53:55 by wilisson         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef CUB3D_H
+# define CUB3D_H
+
+
+# include <MLX42/MLX42.h>
+# include <unistd.h> //read write close
+# include <fcntl.h> //open
+# include <stdlib.h> //malloc free exit
+# include <stdio.h> //printf perror
+# include <string.h> // strerror
+# include <sys/time.h> //gettimeofday
+# include <math.h> //sin cos sqrt etc.
+# include "../includes/structs.h"
+# include "../libft/libft.h"
+
+/* read_file.c */
+char	*read_file_into_buffer(const char *path, size_t *out_size);
+char	**split_lines(const char *buf, size_t size, size_t *out_count);
+void	free_lines(char **lines);
+
+/* parse_file.c */
+int		parse_file(char *filename, t_game *game);
+
+/* parse_lines.c */
+int		parse_lines(char **lines, size_t numlines, t_game *game);
+
+/* parse_config.c */
+int		parse_config_line(const char *line, t_game *game);
+int		validate_config(t_game *game);
+
+/* parse_map.c */
+int		parse_map_from_lines(char **lines, size_t start,
+			size_t count, t_game *game);
+
+/* validate_map.c */
+int		validate_map(t_map *map);
+
+/* utils */
+void	free_tab(char **tab);
+
+#endif
