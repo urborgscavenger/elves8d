@@ -6,13 +6,11 @@
 /*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 15:20:38 by wilisson          #+#    #+#             */
-/*   Updated: 2026/03/10 16:48:40 by wilisson         ###   ########.fr       */
+/*   Updated: 2026/03/10 18:29:05 by wilisson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
-
-#define READ_CHUNK 4096
 
 char	*read_file_into_buffer(const char *path, size_t *out_size)
 {

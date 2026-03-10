@@ -6,13 +6,14 @@
 /*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 15:21:40 by wilisson          #+#    #+#             */
-/*   Updated: 2026/03/10 16:53:55 by wilisson         ###   ########.fr       */
+/*   Updated: 2026/03/10 18:29:16 by wilisson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
 
+# define READ_CHUNK 4096
 
 # include <MLX42/MLX42.h>
 # include <unistd.h> //read write close
@@ -46,6 +47,9 @@ int		parse_map_from_lines(char **lines, size_t start,
 
 /* validate_map.c */
 int		validate_map(t_map *map);
+
+/* validate_connectivity.c */
+int		validate_map_connectivity(t_map *map);
 
 /* utils */
 void	free_tab(char **tab);
