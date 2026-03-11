@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+         #
+#    By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/03 15:23:16 by wilisson          #+#    #+#              #
-#    Updated: 2026/03/11 15:42:17 by wilisson         ###   ########.fr        #
+#    Updated: 2026/03/11 17:08:57 by mbauer           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,10 @@ LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 SRC = main.c \
+	rendering/render_walls.c \
+	rendering/render_minimap.c \
+	rendering/render_utils.c \
+	rendering/events.c \
 	parsing/read_file.c \
 	parsing/split_lines.c \
 	parsing/parse_file.c \
