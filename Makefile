@@ -6,7 +6,7 @@
 #    By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/03 15:23:16 by wilisson          #+#    #+#              #
-#    Updated: 2026/03/11 15:32:44 by wilisson         ###   ########.fr        #
+#    Updated: 2026/03/11 15:42:17 by wilisson         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,7 @@ LIBFT = $(LIBFT_DIR)/libft.a
 
 SRC = main.c \
 	parsing/read_file.c \
+	parsing/split_lines.c \
 	parsing/parse_file.c \
 	parsing/parse_lines.c \
 	parsing/parse_config.c \
