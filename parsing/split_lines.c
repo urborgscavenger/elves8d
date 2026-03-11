@@ -6,7 +6,7 @@
 /*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/11 15:00:00 by wilisson          #+#    #+#             */
-/*   Updated: 2026/03/11 15:42:15 by wilisson         ###   ########.fr       */
+/*   Updated: 2026/03/11 15:57:34 by wilisson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static int	fill_lines(char **lines, const char *buf, size_t size)
 	i = 0;
 	while (i <= size)
 	{
-		if (i == size || buf[i] == '\n')
+		if (buf[i] == '\n' || (i == size && start < i))
 		{
 			lines[idx] = extract_line(buf, start, i);
 			if (!lines[idx])

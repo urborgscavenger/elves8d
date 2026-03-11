@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
+/*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 12:00:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/11 17:08:57 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/11 18:22:12 by wilisson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 	}
 
 	// Initialize game structure
-	game.map.grid = ft_calloc(1024, sizeof(char *));
+	game.map.grid = NULL;
 	game.map.height = 0;
 	game.map.width = 0;
 	game.config.no_path = NULL;
