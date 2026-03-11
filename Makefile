@@ -6,7 +6,7 @@
 #    By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/03 15:23:16 by wilisson          #+#    #+#              #
-#    Updated: 2026/03/10 18:24:52 by wilisson         ###   ########.fr        #
+#    Updated: 2026/03/11 15:32:44 by wilisson         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,9 +24,12 @@ SRC = main.c \
 	parsing/parse_file.c \
 	parsing/parse_lines.c \
 	parsing/parse_config.c \
+	parsing/parse_colors.c \
 	parsing/parse_map.c \
+	parsing/parse_player.c \
 	parsing/validate_map.c \
 	parsing/validate_connectivity.c \
+	parsing/flood_fill.c \
 	parsing/utils.c
 OBJ = $(SRC:.c=.o)
 
