@@ -6,16 +6,15 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 18:58:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/12 18:16:17 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/12 19:40:47 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/cub3d.h"
 #include "includes/render.h"
 
-static int	load_texture(t_game *game, int index, char *cwd)
+static int	load_texture(t_game *game, int index)
 {
-	char	full_path[2048];
 	char	*path;
 
 	if (index == 0)
@@ -26,10 +25,9 @@ static int	load_texture(t_game *game, int index, char *cwd)
 		path = game->config.we_path;
 	else
 		path = game->config.ea_path;
-	sprintf(full_path, "%s/%s", cwd, path);
 	if (index == 0)
-		printf("Loading: %s\n", full_path);
-	game->tex.textures[index] = mlx_load_png(full_path);
+		printf("Loading: %s\n", path);
+	game->tex.textures[index] = mlx_load_png(path);
 	return (game->tex.textures[index] == NULL);
 }
 
@@ -58,18 +56,12 @@ void	init_game(t_game *game)
 
 int	load_textures(t_game *game)
 {
-	char	cwd[1024];
 	int		index;
 
-	if (!getcwd(cwd, sizeof(cwd)))
-	{
-		printf("Error\nFailed to get current directory\n");
-		return (1);
-	}
 	index = 0;
 	while (index < 4)
 	{
-		if (load_texture(game, index, cwd))
+		if (load_texture(game, index))
 		{
 			printf("Error\nFailed to load textures\n");
 			return (1);
