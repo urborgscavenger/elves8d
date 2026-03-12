@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 15:21:40 by wilisson          #+#    #+#             */
-/*   Updated: 2026/03/11 15:31:37 by wilisson         ###   ########.fr       */
+/*   Updated: 2026/03/12 18:16:17 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,5 +65,11 @@ int		flood_fill(t_flood_params *p, int x, int y);
 
 /* utils */
 void	free_tab(char **tab);
+
+/* main_utils.c */
+void	init_game(t_game *game);
+int		load_textures(t_game *game);
+int		init_graphics(t_game *game);
+void	cleanup_game(t_game *game);
 
 #endif

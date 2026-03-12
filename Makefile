@@ -6,7 +6,7 @@
 #    By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/03 15:23:16 by wilisson          #+#    #+#              #
-#    Updated: 2026/03/12 18:07:16 by mbauer           ###   ########.fr        #
+#    Updated: 2026/03/12 18:16:17 by mbauer           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,7 @@ LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 SRC = main.c \
+	main_utils.c \
 	rendering/render_walls.c \
 	rendering/render_walls_setup.c \
 	rendering/render_walls_draw.c \
