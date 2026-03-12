@@ -1,7 +1,7 @@
-NO ./fractal3.png
-SO ./fractal4.png
-WE ./fractal3.png
-EA ./fractal4.png
+NO ./bober_kurw.png
+SO ./bober_kurw.png
+WE ./bober_kurw.png
+EA ./bober_kurw.png
 F 80,40,0
 C 30,30,60
 

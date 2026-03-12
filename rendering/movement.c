@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/11 16:51:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/11 17:08:57 by mbauer           ###   ########.fr       */
+/*   Created: 2026/03/11 17:19:04 by mbauer            #+#    #+#             */
+/*   Updated: 2026/03/11 20:37:04 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	key_hook(mlx_key_data_t keydata, void *param)
 	}
 	else if (keydata.key == MLX_KEY_LEFT)
 	{
-		double angle = 3.141592653589793 / 10.0;
+		double angle = 3.141592653589793 / 4.0;
 		double cos_a = cos(-angle);
 		double sin_a = sin(-angle);
 		double old_dir_x = game->player.dir_x;
@@ -71,7 +71,7 @@ void	key_hook(mlx_key_data_t keydata, void *param)
 	}
 	else if (keydata.key == MLX_KEY_RIGHT)
 	{
-		double angle = 3.141592653589793 / 10.0;
+		double angle = 3.141592653589793 / 4.0;
 		double cos_a = cos(angle);
 		double sin_a = sin(angle);
 		double old_dir_x = game->player.dir_x;

@@ -6,7 +6,7 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/11 16:50:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/11 17:08:57 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/11 22:30:48 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,23 +19,19 @@
 
 # define SCREEN_WIDTH 1024
 # define SCREEN_HEIGHT 768
-# define NUM_RAYS 256
+# define NUM_RAYS 2048
 # define MINIMAP_SIZE 100
 # define CELL_SIZE 4
 # define BUFFER_SIZE 42
 # define STRIP_WIDTH (SCREEN_WIDTH / NUM_RAYS)
 
-/* rendering/render_walls.c */
 void		render_walls(t_game *game);
 
-/* rendering/render_utils.c */
 uint32_t	get_tex_pixel(mlx_texture_t *tex, int x, int y);
 void		draw_background(t_game *game);
 
-/* rendering/render_minimap.c */
 void		render_minimap(t_game *game);
 
-/* rendering/events.c */
 void		move_player(t_game *game, double dx, double dy);
 void		key_hook(mlx_key_data_t keydata, void *param);
 
