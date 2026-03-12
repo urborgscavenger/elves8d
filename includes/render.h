@@ -6,7 +6,7 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/11 16:50:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/11 22:30:48 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/12 15:25:22 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 
 # define SCREEN_WIDTH 1024
 # define SCREEN_HEIGHT 768
-# define NUM_RAYS 2048
+# define NUM_RAYS 256
 # define MINIMAP_SIZE 100
 # define CELL_SIZE 4
 # define BUFFER_SIZE 42
