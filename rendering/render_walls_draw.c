@@ -6,24 +6,12 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 18:35:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/12 18:07:16 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/12 18:28:48 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/render.h"
 #include <math.h>
-
-typedef struct s_strip
-{
-	int		line_height;
-	int		draw_start;
-	int		draw_end;
-	int		y;
-	int		tex_y;
-	double	wall_x;
-	double	step;
-	double	tex_pos;
-}t_strip;
 
 void	perform_dda(t_game *game)
 {

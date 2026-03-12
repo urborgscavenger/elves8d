@@ -6,7 +6,7 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/11 16:50:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/12 18:07:16 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/12 18:28:54 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,46 @@
 # define MINIMAP_SIZE 100
 # define CELL_SIZE 4
 # define BUFFER_SIZE 42
-# define STRIP_WIDTH (SCREEN_WIDTH / NUM_RAYS)
+# define STRIP_WIDTH 8
+
+typedef struct s_strip
+{
+	int		line_height;
+	int		draw_start;
+	int		draw_end;
+	int		y;
+	int		tex_y;
+	double	wall_x;
+	double	step;
+	double	tex_pos;
+}t_strip;
+
+typedef struct s_raydraw
+{
+	double	cam_x;
+	double	ray_x;
+	double	ray_y;
+	double	delta_x;
+	double	delta_y;
+	double	side_x;
+	double	side_y;
+	int		map_x;
+	int		map_y;
+	int		step_x;
+	int		step_y;
+	int		end_x;
+	int		end_y;
+	int		dx;
+	int		dy;
+	int		sx;
+	int		sy;
+	int		err;
+	int		e2;
+	int		x;
+	int		y;
+	int		move_x;
+	int		hit;
+}	t_raydraw;
 
 typedef struct s_minimap
 {

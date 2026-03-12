@@ -6,40 +6,13 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 18:22:17 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/12 18:22:23 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/12 18:25:18 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/render.h"
 #include <math.h>
 #include <stdlib.h>
-
-typedef struct s_raydraw
-{
-	double	cam_x;
-	double	ray_x;
-	double	ray_y;
-	double	delta_x;
-	double	delta_y;
-	double	side_x;
-	double	side_y;
-	int		map_x;
-	int		map_y;
-	int		step_x;
-	int		step_y;
-	int		end_x;
-	int		end_y;
-	int		dx;
-	int		dy;
-	int		sx;
-	int		sy;
-	int		err;
-	int		e2;
-	int		x;
-	int		y;
-	int		move_x;
-	int		hit;
-}	t_raydraw;
 
 static void	init_ray(t_game *game, t_raydraw *ray_data, int ray)
 {
