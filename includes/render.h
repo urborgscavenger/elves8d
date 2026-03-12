@@ -6,7 +6,7 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/11 16:50:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/12 18:28:54 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/12 18:30:20 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 # define MINIMAP_SIZE 100
 # define CELL_SIZE 4
 # define BUFFER_SIZE 42
-# define STRIP_WIDTH 8
+# define STRIP_WIDTH 4
 
 typedef struct s_strip
 {
