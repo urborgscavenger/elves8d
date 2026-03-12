@@ -6,7 +6,7 @@
 #    By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/03 15:23:16 by wilisson          #+#    #+#              #
-#    Updated: 2026/03/11 20:39:55 by mbauer           ###   ########.fr        #
+#    Updated: 2026/03/12 18:07:16 by mbauer           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,10 @@ LIBFT = $(LIBFT_DIR)/libft.a
 
 SRC = main.c \
 	rendering/render_walls.c \
+	rendering/render_walls_setup.c \
+	rendering/render_walls_draw.c \
 	rendering/render_minimap.c \
+	rendering/render_minimap_helpers.c \
 	rendering/render_utils.c \
 	rendering/movement.c \
 	parsing/read_file.c \
