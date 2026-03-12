@@ -6,7 +6,7 @@
 #    By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/03 15:23:16 by wilisson          #+#    #+#              #
-#    Updated: 2026/03/12 18:16:17 by mbauer           ###   ########.fr        #
+#    Updated: 2026/03/12 19:01:48 by mbauer           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,7 @@ SRC = main.c \
 	rendering/render_minimap.c \
 	rendering/render_minimap_helpers.c \
 	rendering/render_utils.c \
+	rendering/input.c \
 	rendering/movement.c \
 	parsing/read_file.c \
 	parsing/split_lines.c \

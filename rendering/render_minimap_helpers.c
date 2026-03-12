@@ -6,13 +6,19 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 18:22:17 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/12 18:25:18 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/12 18:57:05 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/render.h"
 #include <math.h>
 #include <stdlib.h>
+
+static int	is_inside_map(t_game *game, int x, int y)
+{
+	return (x >= 0 && x < game->map.width
+		&& y >= 0 && y < game->map.height);
+}
 
 static void	init_ray(t_game *game, t_raydraw *ray_data, int ray)
 {
@@ -87,15 +93,15 @@ void	cast_ray_and_draw(t_game *game, t_minimap *mini, int ray)
 	t_raydraw	ray_data;
 
 	init_ray(game, &ray_data, ray);
-	while (!ray_data.hit && ray_data.map_x >= 0
-		&& ray_data.map_x < game->map.width
-		&& ray_data.map_y >= 0 && ray_data.map_y < game->map.height)
+	while (!ray_data.hit && is_inside_map(game, ray_data.map_x, ray_data.map_y))
 	{
 		ray_data.move_x = ray_data.side_x < ray_data.side_y;
 		ray_data.side_x += ray_data.move_x * ray_data.delta_x;
 		ray_data.side_y += (!ray_data.move_x) * ray_data.delta_y;
 		ray_data.map_x += ray_data.move_x * ray_data.step_x;
 		ray_data.map_y += (!ray_data.move_x) * ray_data.step_y;
+		if (!is_inside_map(game, ray_data.map_x, ray_data.map_y))
+			break ;
 		if (game->map.grid[ray_data.map_y][ray_data.map_x] == '1')
 			ray_data.hit = 1;
 	}
