@@ -1,9 +1,9 @@
-NO ./bober_kurw.png
+NO ./beware_of_bober.png
 SO ./bober_kurw.png
-WE ./bober_kurw.png
+WE ./zwykle_bobry.png
 EA ./bober_kurw.png
-F 90,55,20
-C 25,25,70
+F 118,74,36
+C 28,44,96
 
 111111111111111111111111
 1000000000000000000000E1
