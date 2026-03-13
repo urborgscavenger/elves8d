@@ -6,7 +6,7 @@
 /*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 12:00:00 by mbauer            #+#    #+#             */
-/*   Updated: 2026/03/12 18:16:17 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/13 14:48:26 by mbauer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@ int	main(int argc, char **argv)
 	}
 	init_game(&game);
 	if (parse_file(argv[1], &game))
-		return (1);
+		return (cleanup_game(&game), 1);
 	if (load_textures(&game))
-		return (1);
+		return (cleanup_game(&game), 1);
 	if (init_graphics(&game))
-		return (1);
+		return (cleanup_game(&game), 1);
 	mlx_loop(game.mlx.mlx);
 	cleanup_game(&game);
 	return (0);
