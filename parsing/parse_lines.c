@@ -6,7 +6,7 @@
 /*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 12:00:00 by wilisson          #+#    #+#             */
-/*   Updated: 2026/03/10 18:23:07 by wilisson         ###   ########.fr       */
+/*   Updated: 2026/03/16 14:24:38 by wilisson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,6 @@ int	parse_lines(char **lines, size_t numlines, t_game *game)
 	if (validate_config(game) != 0)
 		return (-1);
 	if (validate_map(&game->map) != 0)
-		return (-1);
-	if (validate_map_connectivity(&game->map) != 0)
 		return (-1);
 	return (0);
 }

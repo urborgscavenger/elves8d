@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+        */
+/*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 15:21:40 by wilisson          #+#    #+#             */
-/*   Updated: 2026/03/12 18:16:17 by mbauer           ###   ########.fr       */
+/*   Updated: 2026/03/16 14:24:38 by wilisson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,6 @@ int		find_player(t_game *game);
 
 /* validate_map.c */
 int		validate_map(t_map *map);
-
-/* validate_connectivity.c */
-int		validate_map_connectivity(t_map *map);
 
 /* flood_fill.c */
 char	**copy_map(char **grid, int height, int width);

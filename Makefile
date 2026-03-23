@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mbauer <mbauer@student.42.fr>              +#+  +:+       +#+         #
+#    By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/03 15:23:16 by wilisson          #+#    #+#              #
-#    Updated: 2026/03/12 19:01:48 by mbauer           ###   ########.fr        #
+#    Updated: 2026/03/16 16:46:45 by wilisson         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,9 +38,8 @@ SRC = main.c \
 	parsing/parse_map.c \
 	parsing/parse_player.c \
 	parsing/validate_map.c \
-	parsing/validate_connectivity.c \
 	parsing/flood_fill.c \
-	parsing/utils.c
+	parsing/free_tab.c
 OBJ = $(SRC:.c=.o)
 
 MLX42_LIB = MLX42/build/libmlx42.a
