@@ -6,11 +6,11 @@
 /*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 19:25:49 by wilisson          #+#    #+#             */
-/*   Updated: 2026/03/10 19:26:15 by wilisson         ###   ########.fr       */
+/*   Updated: 2026/03/23 21:54:25 by wilisson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
+#include "../../includes/cub3d.h"
 
 static int	validate_color_value(int val, const char *comp)
 {

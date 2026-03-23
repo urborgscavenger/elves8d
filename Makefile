@@ -6,7 +6,7 @@
 #    By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/03 15:23:16 by wilisson          #+#    #+#              #
-#    Updated: 2026/03/16 16:46:45 by wilisson         ###   ########.fr        #
+#    Updated: 2026/03/23 22:01:16 by wilisson         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,17 +29,17 @@ SRC = main.c \
 	rendering/render_utils.c \
 	rendering/input.c \
 	rendering/movement.c \
-	parsing/read_file.c \
-	parsing/split_lines.c \
-	parsing/parse_file.c \
-	parsing/parse_lines.c \
-	parsing/parse_config.c \
-	parsing/parse_colors.c \
-	parsing/parse_map.c \
-	parsing/parse_player.c \
-	parsing/validate_map.c \
-	parsing/flood_fill.c \
-	parsing/free_tab.c
+	parsing/io/read_file.c \
+	parsing/io/split_lines.c \
+	parsing/io/parse_file.c \
+	parsing/utils/parse_lines.c \
+	parsing/config/parse_config.c \
+	parsing/config/parse_colors.c \
+	parsing/map/parse_map.c \
+	parsing/map/parse_player.c \
+	parsing/map/validate_map.c \
+	parsing/map/flood_fill.c \
+	parsing/utils/free_tab.c
 OBJ = $(SRC:.c=.o)
 
 MLX42_LIB = MLX42/build/libmlx42.a
@@ -62,7 +62,7 @@ $(MLX42_LIB):
 		cd MLX42 && cmake -B build && cmake --build build -j4; \
 	fi
 
-%.o: %.c
+%.o: %.c | $(MLX42_LIB) $(LIBFT)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:

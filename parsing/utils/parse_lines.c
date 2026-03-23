@@ -6,11 +6,11 @@
 /*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 12:00:00 by wilisson          #+#    #+#             */
-/*   Updated: 2026/03/16 14:24:38 by wilisson         ###   ########.fr       */
+/*   Updated: 2026/03/23 21:54:25 by wilisson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
+#include "../../includes/cub3d.h"
 
 static int	is_valid_map_char(char c)
 {

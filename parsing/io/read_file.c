@@ -6,11 +6,11 @@
 /*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 15:20:38 by wilisson          #+#    #+#             */
-/*   Updated: 2026/03/11 15:41:54 by wilisson         ###   ########.fr       */
+/*   Updated: 2026/03/23 21:54:25 by wilisson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
+#include "../../includes/cub3d.h"
 
 static char	*grow_buffer(char *buf, size_t total, size_t *cap)
 {

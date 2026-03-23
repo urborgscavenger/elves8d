@@ -6,11 +6,11 @@
 /*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/11 15:00:00 by wilisson          #+#    #+#             */
-/*   Updated: 2026/03/11 15:16:03 by wilisson         ###   ########.fr       */
+/*   Updated: 2026/03/23 21:54:25 by wilisson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
+#include "../../includes/cub3d.h"
 
 char	**copy_map(char **grid, int height, int width)
 {
