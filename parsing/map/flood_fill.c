@@ -6,7 +6,7 @@
 /*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/11 15:00:00 by wilisson          #+#    #+#             */
-/*   Updated: 2026/03/23 21:54:25 by wilisson         ###   ########.fr       */
+/*   Updated: 2026/03/24 15:30:57 by wilisson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,30 +32,6 @@ char	**copy_map(char **grid, int height, int width)
 	}
 	copy[i] = NULL;
 	return (copy);
-}
-
-int	find_floor_start(char **grid, int width, int height, int *start_pos)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	while (i < height)
-	{
-		j = 0;
-		while (j < width)
-		{
-			if (grid[i][j] == '0')
-			{
-				start_pos[0] = j;
-				start_pos[1] = i;
-				return (0);
-			}
-			++j;
-		}
-		++i;
-	}
-	return (-1);
 }
 
 int	flood_fill(t_flood_params *p, int x, int y)

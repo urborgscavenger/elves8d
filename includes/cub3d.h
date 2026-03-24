@@ -6,7 +6,7 @@
 /*   By: wilisson <wilisson@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/07 15:21:40 by wilisson          #+#    #+#             */
-/*   Updated: 2026/03/16 14:24:38 by wilisson         ###   ########.fr       */
+/*   Updated: 2026/03/24 15:32:22 by wilisson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,6 @@ int		validate_map(t_map *map);
 
 /* flood_fill.c */
 char	**copy_map(char **grid, int height, int width);
-int		find_floor_start(char **grid, int width, int height,
-			int *start_pos);
 int		flood_fill(t_flood_params *p, int x, int y);
 
 /* utils */
