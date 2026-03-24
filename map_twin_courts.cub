@@ -1,7 +1,7 @@
-NO ./bober_kurw.png
+NO ./beware_of_bober.png
 SO ./bober_kurw.png
-WE ./bober_kurw.png
-EA ./bober_kurw.png
+WE ./zwykle_bobry.png
+EA ./another_bober.png
 F 86,64,28
 C 48,32,118
 
