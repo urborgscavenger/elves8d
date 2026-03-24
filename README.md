@@ -72,6 +72,9 @@ Classic references:
 - LodeV Raycasting Tutorial: https://lodev.org/cgtutor/raycasting.html
 - Wolfenstein 3D rendering notes: https://fabiensanglard.net/gebbwolf3d
 - MiniLibX/42 graphics primer: https://harm-smits.github.io/42docs/libs/minilibx
+- More videos about raycasting: https://www.youtube.com/watch?v=gYRrGTC7GtA&list=WL&index=7
+- Fisheye effect: https://gamedev.stackexchange.com/questions/45295/raycasting-fisheye-effect-question
+- and some more
 
 AI usage:
 AI tools were used as an assistant throughout the development process. All
